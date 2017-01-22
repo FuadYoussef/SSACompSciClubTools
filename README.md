@@ -1,2 +1,2 @@
-"# CompSciClub" 
+# CompSciClub
 something
