@@ -1,1 +1,1 @@
-"# CompSciClub" 
+# CompSciClub
