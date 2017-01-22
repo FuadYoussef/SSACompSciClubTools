@@ -263,48 +263,22 @@ void draw() {
    }
    if(schedulePressed){
      int scheduleY= 175;
-    fill(255, 255, 255);
-    rect(500, scheduleY, 100, 50);
-    fill(2, 25, 255);
-    text("Regular Schedule", 502, 190);
-    scheduleY+=75;
+     String[] scheduleNames = new String[]{
+       "Regular Schedule",
+       "Morning Assembly",
+       "Late Assembly",
+       "Early Dismissal",
+       "Delayed Opening",
+       "Tuesday"
+     };
+     for(int i = 0; i < scheduleNames.length; i++){
+      fill(255, 255, 255);
+      rect(500, scheduleY+i*75, 100, 50);
+      fill(2, 25, 255);
+      text(scheduleNames[i], 502, 30+scheduleY+i*75);
     
-    fill(255, 255, 255);
-    rect(500, scheduleY, 100, 50);
-    fill(2, 25, 255);
-    text("Morning Assembly", 502, 265);
-    scheduleY+=75;
+     }
     
-    fill(255, 255, 255);
-    rect(500, scheduleY, 100, 50);
-    fill(2, 25, 255);
-    text("Late Assembly", 502, 340);
-    scheduleY+=75;
-   
-    fill(255, 255, 255);
-    rect(500, scheduleY, 100, 50);
-    fill(2, 25, 255);
-    text("Early Dismissal", 502, 415);
-    scheduleY+=75;
-    
-    fill(255, 255, 255);
-    rect(500, scheduleY, 100, 50);
-    fill(2, 25, 255);
-    text("Delayed Opening", 502, 490);
-    scheduleY+=75;
-    
-    fill(255, 255, 255);
-    rect(500,scheduleY, 100, 50);
-    fill(2, 25, 255);
-    text("Cup Day", 502, 565);
-    scheduleY+=75;
-    
-    fill(255, 255, 255);
-    rect(500, scheduleY, 100, 50);
-    fill(2, 25, 255);
-    text("Tuesday", 502, 640);
-    scheduleY+=75;
-     
    }
    if(yearPressed){
      int yearY= 175;
