@@ -1,5 +1,12 @@
 //global variables here
 //ArrayList<Day> schoolYear = new ArrayList<Day>();
+import java.awt.Color;
+import java.awt.Dimension;
+import java.awt.Graphics;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
+import java.sql.Time;
+import java.util.Date;
 boolean schedulePressed = false;
 boolean dayPressed = false;
 boolean monthPressed = false;
@@ -14,6 +21,15 @@ String year = "";
 String scheduleChange="";
 ArrayList<Day> schoolYear;
 PImage logo;
+boolean calenderView = false;
+long serialVersionUID = 1L;
+ 
+String[] monthNames = {"January", "February","March","April","May","June","July","August","September","October","November","December"};
+ 
+int[] monthLengths = {31,28,31,30,31,30,31,31,30,31,30,31};
+int D_W = 1000;
+int D_H = 800;
+String foc = "Null";
 String dir= "C:/Users/fuady/Documents/Processing/CompSciClubFirst/data//";
 
 //void int SchoolYear(){
@@ -128,8 +144,37 @@ class Day
   }
 }
 
+ class Schedule{
+    String displayType;
+    int[] startTimes, endTimes;
+    String[] periodNames;
+  
+    Schedule(String type){
+   if(type.equals("Normal")){
+    displayType = "Normal";
+    periodNames = new String[]{"1","2","Assembly","3","4a","4b","4c","5","6"};
+    startTimes = new int[]{815,910,1005,1035,1150,1225,1245,1320,1415};
+    endTimes = new int[]{905,1000,1030,1145,1220,1240,1315,1410,1500};
+   }
+  }
+ }
+Schedule[] loadedDays;
+ 
+ int sDay, sMonth, sYear, shift = 0;
+ String[] archTypes = {"Normal","CUP day","PM Assembly"};
 
-class Schedule
+
+ public boolean isWeekday(int[] date){
+  int dayShift = ((date[2]-2017)+(date[2]-2017)/4+date[0])%7;
+  for(int i = 0; i<date[1]; i++){
+   if(i!=1||date[2]%4!=0)dayShift+=monthLengths[i];
+   else dayShift+=29;
+  }
+  if(dayShift<0)dayShift+=7;
+  if(dayShift>0&&dayShift<6)return true;
+  else return false;
+ }
+/*class Schedule
 {
   Period[] periods;
   String name;
@@ -137,7 +182,7 @@ class Schedule
     periods=p;
     name=n;
   }
-}
+}*/
 
 
 class Period
@@ -154,13 +199,18 @@ class Period
 
 
 void draw() {
-  
+  if(!calenderView){
   background(255, 221, 153);
     image(logo, 750, 50, 400, 400);
   fill(255, 255, 255);
   rect(650, 100, 100, 50);
   fill(2, 25, 255);
   text("Submit", 655, 110);
+  
+  fill(255, 255, 255);
+  rect(650, 175, 100, 50);
+  fill(2, 25, 255);
+  text("Display Calender", 655, 185);
 
 
   fill(255, 255, 255);
@@ -419,13 +469,72 @@ void draw() {
     daySelec2 = false;
     daySelec1 =false;
   }
+  }
+  if(calenderView){
+    background(255, 221, 153);
+    fill(255, 255, 255);
+    rect(150, 50, 100, 50);
+    fill(2, 25, 255);
+    text("Add Days", 170, 70);
+    
+    switch(foc){
+  case "Day":
+  case "Null":
+ fill(0, 0, 0);
+    line(D_W/2-390, 200, D_W/2-370, 150);
+    line(D_W/2-390, 200, D_W/2-370, 250);
+    line(D_W/2+390, 200, D_W/2+370, 150);
+    line(D_W/2+390, 200, D_W/2+370, 250);
+    fill(255, 255, 255);
+    rect(D_W/2-350, 150, 700, 100);
+    rect(D_W/2-350, 250, 700, 25);
+    rect(D_W/2-350, 275, 700, 500);
+    fill(0, 0, 0);
+    text(sYear+"", D_W/2-45, 175);
+     text(monthNames[sMonth], D_W/2-50, 200);
+    line(D_W/2-350, 375, D_W/2+350, 375);
+    line(D_W/2-350, 475, D_W/2+350, 475);
+    line(D_W/2-350, 575, D_W/2+350, 575);
+    line(D_W/2-350, 675, D_W/2+350, 675);
+   if(/**/true){
+    for(int i = 1; i<7; i++) line(D_W/2-350+100*i, 250, D_W/2-350+100*i, 775);
+   }
+   else for(int i = 1; i<7; i++) line(D_W/2-350+100*i, 250, D_W/2-350+100*i, 775);
+     text("Sunday", D_W/2-325, 265);
+     text("Monday", D_W/2-225, 265);
+     text("Tuesday", D_W/2-125, 265);
+     text("Wednesday", D_W/2-25, 265);
+     text("Thursday", D_W/2+75, 265);
+     text("Friday", D_W/2+175, 265);
+     text("Saturday", D_W/2+275, 265);
+   int x = monthLengths[sMonth];
+   if(sMonth == 1 && sYear%4 == 0)x = 29;
+   for(int i = shift; i<shift+x; i++){
+      text((i+1-shift)+"", D_W/2-345+(i%7)*100, 300+(i/7)*100);
+      //text(loadedDays[i-shift].displayType, D_W/2-345+(i%7)*100, 310+(i/7)*100);
+   }
+   if(foc.equals("Day")){
+     fill(255, 255, 255);
+     rect(D_W/2-345+((sDay+shift)%7)*100, 300+((sDay+shift)/7)*100, 75, archTypes.length*25);
+     rect(D_W/2-345+((sDay+shift)%7)*100, 300+((sDay+shift)/7)*100, 75, archTypes.length*25);
+    for(int i = 0; i<archTypes.length; i++){
+       text(archTypes[i], D_W/2-345+((sDay+shift)%7)*100, 310+((sDay+shift)/7)*100+25*i);
+    }
+   }
+   break;
+  }
+  }
     
     
   
 }
 void mouseClicked() {
+  if(!calenderView){
   if(mouseX > 650 && mouseX <750 && mouseY>100 && mouseY <150){
       submit();
+  }
+  if(mouseX > 650 && mouseX <750 && mouseY>175 && mouseY <225){
+      viewCalender();
   }
   if(mouseX> 50 && mouseX <150 && mouseY>100 && mouseY <150){
       dayPressed = true;
@@ -654,6 +763,53 @@ void mouseClicked() {
       }
       
     }
+  }if(calenderView){
+    int x = mouseX;
+    int y = mouseY;
+    if(mouseX> 150 && mouseX< 250 && mouseY >50 && mouseY < 125){
+      calenderView = false;
+    }
+    if(foc.equals("Day")){
+     
+    }
+    if(foc.equals("Null")){
+     if(y>=150&&y<=250){
+      if(x>D_W/2-390&&x<D_W/2-370){
+       sMonth--;
+       if(sMonth<0){
+        sMonth = 11;
+        sYear--;
+       }
+       if(sMonth!=1||sYear%4!=0)shift = (shift - monthLengths[sMonth]) % 7;
+       else shift = (shift - 29) % 7;
+       if(shift<0)shift = shift + 7;
+      }
+      if(x<D_W/2+390&&x>D_W/2+370){
+       if(sMonth!=1||sYear%4!=0)shift = (shift + monthLengths[sMonth]) % 7;
+       else shift = (shift + 29) % 7;
+       sMonth++;
+       if(sMonth>11){
+        sMonth = 0;
+        sYear++;
+       }
+      }
+     }else if(y>=275&&y<=775&&x>=D_W/2-350&&x<=D_W/2+350){
+      sDay = (y-275)/100*7+(x-D_W/2+350)/100-shift;
+      if(sDay>=0&&(sDay< monthLengths[sMonth]||(sMonth==1&&sYear%4==0&&sDay<29)))foc = "Day";
+     }
+    }else if(foc.equals("Switch")){
+     
+    }
+  }
+}
+  void viewCalender(){
+    calenderView = true;
+      sDay = 0;
+  sMonth = 0;
+  sYear = 2017;
+  shift = ((sYear-2017)+(sYear-2017)/4)%7;
+  
+
   }
 void submit(){
   println(year);
